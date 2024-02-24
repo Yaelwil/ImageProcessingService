@@ -209,3 +209,4 @@ class Img:
                     segmented_image[row][col] = 0
 
         return segmented_image
+
