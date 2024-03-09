@@ -78,12 +78,9 @@ class Img:
 
             self.data[i] = res
 
-    def rotate(self, degrees=90):
+    def rotate(self):
         """
-        Rotate the image by the specified degrees.
-
-        Args:
-            degrees (float): Rotation angle in degrees.
+        Rotate the image by 90 degrees.
 
         Returns:
             Img: Rotated image object.
@@ -94,6 +91,7 @@ class Img:
         height = image_info['height']
         center_x = image_info['center_x']
         center_y = image_info['center_y']
+        degrees = 90
 
         # 2. Calculate degrees in radiants
         radians = math.radians(degrees)
@@ -141,7 +139,7 @@ class Img:
         Concatenate the current image with another image.
 
         Args:
-            other_img (Img): Another Img object to concatenate.
+            other_img (Img): Another Image object to concatenate.
             direction (str): Concatenation direction, either 'horizontal' or 'vertical'.
 
         Returns:
@@ -164,20 +162,18 @@ class Img:
         if direction == 'horizontal':
             if self_height != other_height:
                 raise RuntimeError("Image dimensions are not compatible for horizontal concatenation. Heights must be the same.")
-            new_data = [row_self + row_other for row_self, row_other in zip(self.data, other_data)]
+            else:
+                self.data = [row_self + row_other for row_self, row_other in zip(self.data, other_data)]
         elif direction == 'vertical':
             if self_width != other_width:
                 raise RuntimeError("Image dimensions are not compatible for vertical concatenation. Widths must be the same.")
-            new_data = self.data + other_data
+            else:
+                self.data += other_data
         else:
             raise ValueError("Invalid concatenation direction. Use 'horizontal' or 'vertical'.")
 
-        # Create a new Img instance with the concatenated data
-        concatenated_img = Img(self.path)
-        concatenated_img.data = new_data
-
-        # Return the concatenated Img instance
-        return concatenated_img
+        # Return a new Img instance with the concatenated data
+        return Img(self.data)
 
     def segment(self):
         """
@@ -193,7 +189,7 @@ class Img:
         height = image_info['height']
 
         # 2. Create a new variable
-        segmented_image = [row.copy() for row in self.data]
+        segmented_image = [[0] * width for _ in range(height)]
 
         # 3. Iterate over pixels
         for row in range(height):
@@ -204,9 +200,67 @@ class Img:
                 if pixel_intensity > 100:
                     # Replace pixel with white (intensity 255)
                     segmented_image[row][col] = 255
-                else:
-                    # Replace pixel with black (intensity 0)
-                    segmented_image[row][col] = 0
 
+        self.data = segmented_image
         return segmented_image
+    
+    def rotate_by_degree(self, degrees):
+        """
+        Rotate the image by the specified degrees.
 
+        Args:
+            degrees (float): Rotation angle in degrees.
+
+        Returns:
+            Img: Rotated image object.
+        """
+        # 1. Import the data from the basic_calculations function
+        image_info = self.calculate_image_info()
+        width = image_info['width']
+        height = image_info['height']
+        center_x = image_info['center_x']
+        center_y = image_info['center_y']
+
+        # 2. Calculate degrees in radiants
+        radians = math.radians(degrees)
+
+        # 3. Create new variable to store the new rotated image
+        rotated_image = [[0] * width for _ in range(height)]
+
+        # 4. Iterate over each pixel in the original image
+        for y in range(height):
+            for x in range(width):
+
+                # 5. Calculate for each pixel its new location
+                new_x = int((x - center_x) * math.cos(radians) - (y - center_y) * math.sin(radians) + center_x)
+                new_y = int((x - center_x) * math.sin(radians) + (y - center_y) * math.cos(radians) + center_y)
+
+                # 6. Check if new coordinates are within bounds
+                if 0 <= new_x < width and 0 <= new_y < height:
+                    # 7. Copy the pixel value to the rotated position
+                    rotated_image[y][x] = self.data[new_y][new_x]
+
+        # 8. Set the rotated data back to the instance
+        self.data = rotated_image
+
+        # 9. Display Result (optional, you might not want to return anything)
+        return self
+
+    def apply_random_colors(self):
+        """
+        Apply the 'random colors' filter to the image.
+        Assigns a random RGB color to each pixel.
+        """
+
+        # Calculate the image information for the current instance
+        self_info = self.calculate_image_info()
+        height = self_info['height']
+        width = self_info['width']
+
+        for i in range(height):
+            for j in range(width):
+                # Generate random RGB values
+                color = random.randint(0, 255)
+
+                # Set the pixel color
+                self.data[i][j] = color
