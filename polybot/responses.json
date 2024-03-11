@@ -1,0 +1,49 @@
+{
+"greetings": [
+    "Hi there! Let's apply some filters!",
+    "Hello! Ready for filter time?",
+    "Let's dive into filters together!",
+    "Hi! How about we explore some cool filters?",
+    "Hello there! Filter fun awaits!",
+    "Hey! Ready to spice things up with filters?",
+    "Hiya! Let's kick off the filter adventure!",
+    "Hello! Filters on the menu today?",
+    "Greetings, explorer! Time for some filter magic!",
+    "Hey you! How about a dash of filters?",
+    "Hi there! Ready to jazz up your day with filters?",
+    "Hello, friend! Let's get creative with filters!",
+    "Heya! Filter excitement loading...",
+    "Hi! Filters are the name of the game!",
+    "Hello! Time to filter out the ordinary!",
+    "Hey you! Let's turn up the filter vibes!"
+],
+  "well_being": [
+    "I am good, thank you",
+    "Feeling great today!",
+    "Fantastic! How about some filters?",
+    "Doing well! Ready to explore some filter options?",
+    "Pretty good, thanks!",
+  ],
+  "thanks": [
+    "You're welcome!",
+    "No problem!",
+    "Glad I could help!",
+    "Happy to assist!"
+  ],
+  "filter": {
+    "intro": [
+      "Sure, let me tell you about filters."
+    ],
+    "options": [
+      "Filter 1",
+      "Filter 2",
+      "Filter 3"
+    ]
+  },
+  "default": [
+    "I didn't quite get that. Can you please rephrase?",
+    "I'm not sure what you mean.",
+    "Sorry, I couldn't understand.",
+    "Let's try something else."
+  ]
+}
