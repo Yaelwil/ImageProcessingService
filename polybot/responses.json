@@ -22,7 +22,7 @@
     "Feeling great today!",
     "Fantastic! How about some filters?",
     "Doing well! Ready to explore some filter options?",
-    "Pretty good, thanks!",
+    "Pretty good, thanks!"
   ],
   "thanks": [
     "You're welcome!",
@@ -35,9 +35,12 @@
       "Sure, let me tell you about filters."
     ],
     "options": [
-      "Filter 1",
-      "Filter 2",
-      "Filter 3"
+      "1. Blur",
+      "2. Contour",
+      "3. Rotate",
+      "4. Salt and pepper",
+      "5. Segment",
+      "6. Random colors."
     ]
   },
   "default": [
