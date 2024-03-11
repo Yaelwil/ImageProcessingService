@@ -3,8 +3,8 @@ from loguru import logger
 import os
 import time
 from telebot.types import InputFile
-from img_proc import Img
-from responses import load_responses
+from polybot.img_proc import Img
+from polybot.responses import load_responses
 import random
 
 
