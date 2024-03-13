@@ -3,8 +3,8 @@ from loguru import logger
 import os
 import time
 from telebot.types import InputFile
-from polybot.img_proc import Img
-from polybot.responses import load_responses
+from img_proc import Img
+from responses import load_responses
 import random
 
 
@@ -112,25 +112,31 @@ class ImageProcessingBot(Bot):
         # Check if the message contains a photo with a caption
         if 'photo' in msg and 'caption' in msg:
             photo_caption = msg['caption'].lower()
-            # Check for specific keywords in the caption to determine the filter to apply
-            if 'blur' in photo_caption:
-                self.apply_blur_filter(msg)
-            elif 'contour' in photo_caption:
-                self.apply_contour_filter(msg)
-            elif 'rotate' in photo_caption:
-                self.apply_rotate_filter(msg)
-            elif 'salt and pepper' in photo_caption:
-                self.apply_salt_n_pepper_filter(msg)
-            elif 'segment' in photo_caption:
-                self.apply_segment_filter(msg)
-            elif 'random color' in photo_caption:
-                self.apply_random_colors_filter(msg)
-            else:
-                # If no specific filter is mentioned, respond with a default message
-                self.send_text(msg['chat']['id'], self.responses['no_filter'])
+
+            try:
+                # Check for specific keywords in the caption to determine the filter to apply
+                if 'blur' in photo_caption:
+                    self.apply_blur_filter(msg)
+                elif 'contour' in photo_caption:
+                    self.apply_contour_filter(msg)
+                elif 'rotate' in photo_caption:
+                    self.apply_rotate_filter(msg)
+                elif 'salt and pepper' in photo_caption:
+                    self.apply_salt_n_pepper_filter(msg)
+                elif 'segment' in photo_caption:
+                    self.apply_segment_filter(msg)
+                elif 'random color' in photo_caption:
+                    self.apply_random_colors_filter(msg)
+                else:
+                    # If no specific filter is mentioned, respond with a default message
+                    self.send_text(msg['chat']['id'], self.responses['no_filter'])
+            except Exception:
+                self.send_text(msg['chat']['id'], "Photo has an issue")
+
         # If the message doesn't contain a photo with a caption, handle it as a regular text message
         else:
             super().handle_message(msg)
+
 
     def apply_filter(self, msg, filter_func, filter_name):
         # Download the photo and apply the specified filter
