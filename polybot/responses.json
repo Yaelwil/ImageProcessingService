@@ -48,5 +48,21 @@
     "I'm not sure what you mean.",
     "Sorry, I couldn't understand.",
     "Let's try something else."
+  ],
+  "error": [
+    "There was an error processing your photo",
+    "Failed to apply filter",
+    "There was an issue with the photo",
+    "There was a problem with the photo",
+    "try again",
+    "retry",
+    "wrong",
+    "unsuccessful",
+    "unable",
+    "trouble",
+    "unable to",
+    "please try",
+    "again later",
+    "another attempt"
   ]
 }
