@@ -5,6 +5,10 @@ import time
 from telebot.types import InputFile
 from polybot.img_proc import Img
 from polybot.responses import load_responses
+
+#from img_proc import Img
+#from responses import load_responses
+
 import random
 
 
@@ -85,6 +89,9 @@ class Bot:
             filter_response_options = "\n".join(self.responses['filter']['options'])
             full_filter_response = f"{filter_response_intro}\n\nAvailable Filters:\n{filter_response_options}"
             self.send_text(msg['chat']['id'], full_filter_response)
+        elif 'text' in msg and any(word in msg['text'].lower() for word in ['help']):
+            help_response = '\n'.join(self.responses['help'])
+            self.send_text(msg['chat']['id'], help_response)
         else:
             # If no greeting or well-being question, respond with the original message
             default_response = random.choice(self.responses['default'])
@@ -103,40 +110,47 @@ class ImageProcessingBot(Bot):
 
     def __init__(self, token, telegram_chat_url):
         super().__init__(token, telegram_chat_url)
-        self.concat_state = None  # Variable to track concatenation state
-        self.concat_first_image = None  # Variable to store the first image in concatenation process
+        self.responses = load_responses()
 
     def handle_message(self, msg):
         logger.info(f'Message: {msg}')
 
         # Check if the message contains a photo with a caption
-        if 'photo' in msg and 'caption' in msg:
-            photo_caption = msg['caption'].lower()
+        if 'photo' in msg:
+            if 'caption' in msg:
 
-            try:
-                # Check for specific keywords in the caption to determine the filter to apply
-                if 'blur' in photo_caption:
-                    self.apply_blur_filter(msg)
-                elif 'contour' in photo_caption:
-                    self.apply_contour_filter(msg)
-                elif 'rotate' in photo_caption:
-                    self.apply_rotate_filter(msg)
-                elif 'salt and pepper' in photo_caption:
-                    self.apply_salt_n_pepper_filter(msg)
-                elif 'segment' in photo_caption:
-                    self.apply_segment_filter(msg)
-                elif 'random color' in photo_caption:
-                    self.apply_random_colors_filter(msg)
-                else:
-                    # If no specific filter is mentioned, respond with a default message
-                    self.send_text(msg['chat']['id'], self.responses['no_filter'])
-            except Exception:
-                self.send_text(msg['chat']['id'], "Photo has an issue")
+                photo_caption = msg['caption'].lower()
+
+                try:
+                    # Check for specific keywords in the caption to determine the filter to apply
+                    if 'blur' in photo_caption:
+                        self.apply_blur_filter(msg)
+                    elif 'contour' in photo_caption:
+                        self.apply_contour_filter(msg)
+                    elif 'rotate' in photo_caption:
+                        self.apply_rotate_filter(msg)
+                    elif 'salt and pepper' in photo_caption:
+                        self.apply_salt_n_pepper_filter(msg)
+                    elif 'segment' in photo_caption:
+                        self.apply_segment_filter(msg)
+                    elif 'random color' in photo_caption:
+                        self.apply_random_colors_filter(msg)
+                    else:
+                        # If no specific filter is mentioned, respond with a default message
+                        default_response = random.choice(self.responses['default'])
+                        self.send_text(msg['chat']['id'], default_response)
+
+                except Exception:
+                    no_permission_response = random.choice(self.responses['photo_errors']['permissions_error'])
+                    self.send_text(msg['chat']['id'], no_permission_response)
+            else:
+                # If photo is sent without a caption, return a random response from the JSON file
+                no_captions_response = random.choice(self.responses['photo_errors']['no_caption'])
+                self.send_text(msg['chat']['id'], no_captions_response)
 
         # If the message doesn't contain a photo with a caption, handle it as a regular text message
         else:
             super().handle_message(msg)
-
 
     def apply_filter(self, msg, filter_func, filter_name):
         # Download the photo and apply the specified filter
