@@ -183,7 +183,7 @@ class ImageProcessingBot(Bot):
         img_instance = Img(img_path)
 
         # Apply the 'random colors' filter
-        img_instance.apply_random_colors()
+        img_instance.random_colors()
 
         processed_img_path = img_instance.save_img()
 

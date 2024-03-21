@@ -246,7 +246,7 @@ class Img:
         # 9. Display Result (optional, you might not want to return anything)
         return self
 
-    def apply_random_colors(self):
+    def random_colors(self):
         """
         Apply the 'random colors' filter to the image.
         Assigns a random RGB color to each pixel.
