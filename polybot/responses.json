@@ -59,7 +59,7 @@
             "The picture is worth a thousand words, but a caption would be helpful!",
             "I'm unable to interpret this image without a caption. Please add one.",
             "I'm missing context here! No caption found with this photo.",
-            "A picture without a caption is like a story without words. Please add one!",
+            "A picture without a caption is like a story without words. Please add one!"
         ],
         "permissions_error": [
             "There was an error processing your photo",
