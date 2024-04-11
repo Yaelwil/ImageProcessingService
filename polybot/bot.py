@@ -3,12 +3,8 @@ from loguru import logger
 import os
 import time
 from telebot.types import InputFile
-from polybot.img_proc import Img
-from polybot.responses import load_responses
-
-#from img_proc import Img
-#from responses import load_responses
-
+from img_proc import Img
+from responses import load_responses
 import random
 
 
@@ -27,8 +23,6 @@ class Bot:
         self.telegram_bot_client.set_webhook(url=f'{telegram_chat_url}/{token}/', timeout=60)
 
         logger.info(f'Telegram Bot information\n\n{self.telegram_bot_client.get_me()}')
-
-        # Load responses from the JSON file
         self.responses = load_responses()
 
     def send_text(self, chat_id, text):
@@ -71,7 +65,6 @@ class Bot:
 
     def handle_message(self, msg):
         """Bot Main message handler"""
-
         logger.info(f'Incoming message: {msg}')
 
         # Check if the user's message contains a greeting
@@ -107,22 +100,21 @@ class QuoteBot(Bot):
 
 
 class ImageProcessingBot(Bot):
-
     def __init__(self, token, telegram_chat_url):
         super().__init__(token, telegram_chat_url)
         self.responses = load_responses()
 
     def handle_message(self, msg):
-        logger.info(f'Message: {msg}')
+        logger.info(f'Incoming message: {msg}')
 
         # Check if the message contains a photo with a caption
         if 'photo' in msg:
             if 'caption' in msg:
-
                 photo_caption = msg['caption'].lower()
 
                 try:
-                    # Check for specific keywords in the caption to determine the filter to apply
+                    photo_caption = msg['caption'].lower()
+
                     if 'blur' in photo_caption:
                         self.apply_blur_filter(msg)
                     elif 'contour' in photo_caption:
@@ -133,8 +125,6 @@ class ImageProcessingBot(Bot):
                         self.apply_salt_n_pepper_filter(msg)
                     elif 'segment' in photo_caption:
                         self.apply_segment_filter(msg)
-                    elif 'random color' in photo_caption:
-                        self.apply_random_colors_filter(msg)
                     else:
                         # If no specific filter is mentioned, respond with a default message
                         default_response = random.choice(self.responses['default'])
@@ -143,14 +133,14 @@ class ImageProcessingBot(Bot):
                 except Exception:
                     no_permission_response = random.choice(self.responses['photo_errors']['permissions_error'])
                     self.send_text(msg['chat']['id'], no_permission_response)
-            else:
-                # If photo is sent without a caption, return a random response from the JSON file
-                no_captions_response = random.choice(self.responses['photo_errors']['no_caption'])
-                self.send_text(msg['chat']['id'], no_captions_response)
+                else:
+                    # If photo is sent without a caption, return a random response from the JSON file
+                    no_captions_response = random.choice(self.responses['photo_errors']['no_caption'])
+                    self.send_text(msg['chat']['id'], no_captions_response)
 
-        # If the message doesn't contain a photo with a caption, handle it as a regular text message
-        else:
-            super().handle_message(msg)
+                    # If the message doesn't contain a photo with a caption, handle it as a regular text message
+            else:
+                super().handle_message(msg)
 
     def apply_filter(self, msg, filter_func, filter_name):
         # Download the photo and apply the specified filter
@@ -177,16 +167,3 @@ class ImageProcessingBot(Bot):
 
     def apply_segment_filter(self, msg):
         self.apply_filter(msg, Img.segment, 'Segment')
-        
-    def apply_random_colors_filter(self, msg):
-        img_path = self.download_user_photo(msg)
-        img_instance = Img(img_path)
-
-        # Apply the 'random colors' filter
-        img_instance.random_colors()
-
-        processed_img_path = img_instance.save_img()
-
-        # Send the processed image to the user
-        self.send_photo(msg['chat']['id'], processed_img_path)
-        self.send_text(msg['chat']['id'], 'Random colors filter applied successfully.')
